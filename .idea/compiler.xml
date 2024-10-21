@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="MDK-1.21-NeoGradle-main.MDK-1.21-NeoGradle-main.main" target="21" />
-      <module name="MDK-1.21-NeoGradle-main.MDK-1.21-NeoGradle-main.test" target="21" />
+      <module name="MDK-1.21-NeoGradle-main.MDK-1.21-NeoGradle-main.main~1" target="21" />
+      <module name="MDK-1.21-NeoGradle-main.MDK-1.21-NeoGradle-main.test~1" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
