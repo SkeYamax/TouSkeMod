@@ -1,0 +1,94 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.dog",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
+			},
+			"bones": [
+				{
+					"name": "left_back_leg",
+					"pivot": [1, 10, 4],
+					"cubes": [
+						{"origin": [1, 0, 4], "size": [3, 6, 3], "uv": [36, 29]}
+					]
+				},
+				{
+					"name": "bone3",
+					"parent": "left_back_leg",
+					"pivot": [1, 10, 4]
+				},
+				{
+					"name": "right_back_leg",
+					"pivot": [-3, 10, 4],
+					"cubes": [
+						{"origin": [-3, 0, 4], "size": [3, 6, 3], "uv": [49, 29]}
+					]
+				},
+				{
+					"name": "right_front_leg",
+					"pivot": [-3, 10, -6],
+					"cubes": [
+						{"origin": [-8, 8, 4], "size": [3, 10, 3], "uv": [49, 2]}
+					]
+				},
+				{
+					"name": "left_front_leg",
+					"pivot": [1, 10, -6],
+					"cubes": [
+						{"origin": [6, 8, 4], "size": [3, 10, 3], "uv": [35, 2]}
+					]
+				},
+				{
+					"name": "bone2",
+					"parent": "left_front_leg",
+					"pivot": [1, 10, -6]
+				},
+				{
+					"name": "body",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-4, 19, -13], "size": [9, 11, 16], "pivot": [0, 13, -6], "rotation": [-90, 0, 0], "uv": [1, 1]},
+						{"origin": [-5, 5, -1], "size": [11, 14, 11], "uv": [0, 28]}
+					]
+				},
+				{
+					"name": "bone",
+					"parent": "body",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "head",
+					"pivot": [0.5, 17, -8],
+					"cubes": [
+						{"origin": [-2, 20, -10], "size": [5, 7, 10], "pivot": [1, 23, -2], "rotation": [55, 0, 0], "uv": [34, 46]},
+						{"origin": [3, 21, -2], "size": [3, 2, 1], "uv": [2, 61], "mirror": true},
+						{"origin": [-5, 21, -2], "size": [3, 2, 1], "uv": [2, 61]},
+						{"origin": [0.5, 8, -7], "size": [0, 7, 5], "uv": [23, 52]}
+					]
+				},
+				{
+					"name": "right_horn",
+					"parent": "head",
+					"pivot": [1, 18, -8],
+					"cubes": [
+						{"origin": [-1.99, 21, -5], "size": [2, 7, 2], "uv": [12, 55]}
+					]
+				},
+				{
+					"name": "left_horn",
+					"parent": "head",
+					"pivot": [1, 18, -8],
+					"cubes": [
+						{"origin": [0.99, 21, -5], "size": [2, 7, 2], "uv": [12, 55]}
+					]
+				}
+			]
+		}
+	]
+}

@@ -89,17 +89,31 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+// This is the repositories block in your build.gradle. NOT the one in publishing, or in buildscript. If it does not exist already, create it.
+repositories {
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
+}
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
-    // The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.
-    // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
-    // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
-    // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
+    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.7.3"
+}
+
+dependencies {
+    //指定版本的我的世界的版本使用
+    // 根据插件应用有几个选项我们将假设你应用用户开发插件如上面所示
+    // 组用户开发是网络新伪造，模块名称是新锻造，版本是相同的新锻造版本
+    // 然而你也可以使用香草插件（净新锻造等级香草）使用一个版本的我的世界没有新锻造加载器
+    // 它提供了选择使用网络我的世界作为组，和其中之一；客户端、服务器或加入的模块名称，加上游戏版本
+    // 的目的：你可以把这个依赖关系当作它是你要使用的普通库
     implementation "net.neoforged:neoforge:${neo_version}"
 
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
+    //示例与jei
+    // 依赖于jei api被声明为编译时使用，而完整的jei工件在运行时使用
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
     // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
     // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
@@ -146,7 +160,7 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-// Example configuration to allow publishing using the maven-publish plugin
+//示例配置，允许使用maven发布插件进行发布
 publishing {
     publications {
         register('mavenJava', MavenPublication) {

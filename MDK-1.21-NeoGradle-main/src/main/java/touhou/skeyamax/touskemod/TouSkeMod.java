@@ -23,6 +23,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -31,6 +32,14 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
+import software.bernie.geckolib.GeckoLib;
+import touhou.skeyamax.touskemod.entity.ModEntityTypes;
+import touhou.skeyamax.touskemod.item.TouMod;
+import touhou.skeyamax.touskemod.platform.TouSkeModPlatform;
+import touhou.skeyamax.touskemod.registry.EntityRegistry;
+
+import javax.swing.text.html.parser.Entity;
+import java.util.ServiceLoader;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(TouSkeMod.MODID)
@@ -41,62 +50,101 @@ public class TouSkeMod
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    public static final TouSkeModPlatform COMMON_PLATFORM = ServiceLoader.load(TouSkeModPlatform.class).findFirst().orElseThrow();
+
+    public static void doRegistrations() {
+        BlockRegistry.init();
+        EntityRegistry.init();
+    }
 
 
-    // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
+
+    // 创建一个延迟寄存器来保存方块，这些方块都将在“示例”名称空间下注册
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
-    // Create a Deferred Register to hold Items which will all be registered under the "examplemod" namespace
+    // 创建一个延迟注册器，以保存所有将在“示例”名称空间下注册的项目
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
+    // 创建一个延迟注册来保存创造性标签，这些都将在“示例”名称空间下注册
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
+
+    public static final DeferredBlock<Block> TOUMOD = BLOCKS.registerSimpleBlock("toumod",BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
+    public static final DeferredBlock<Block> TOUMOD1 = BLOCKS.registerSimpleBlock("toumod1",BlockBehaviour.Properties.of().mapColor(MapColor.SNOW));
+    public static final DeferredBlock<Block> THDRINK = BLOCKS.registerSimpleBlock("thdrink",BlockBehaviour.Properties.of().mapColor(MapColor.SNOW));
+
+
+    public static final DeferredItem<BlockItem> TOUMOD_ITEM = ITEMS.registerSimpleBlockItem("toumod",TOUMOD);
+    public static final DeferredItem<BlockItem> TOUHOU1_ITEM = ITEMS.registerSimpleBlockItem("toumod1",TOUMOD1);
+    public static final DeferredItem<BlockItem> THDRINK_ITEM = ITEMS.registerSimpleBlockItem("thdrink",THDRINK);
+
+    public static final DeferredRegister<CreativeModeTab> TOU_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TOU_TAB = CREATIVE_MODE_TABS.register("tou_tab",() -> CreativeModeTab.builder()
+            .title(Component.translatable("touhou"))
+            .icon(() -> TOUMOD_ITEM.get().getDefaultInstance())
+            .displayItems((parmeters, output) ->{
+                output.accept(TOUHOU1_ITEM.get());
+                output.accept(TOUMOD_ITEM.get());
+                output.accept(THDRINK_ITEM.get());
+
+            }).build()
+    );
+
+
+    // 创建一个名为“示例块：示例块”的新块，结合了名称空间和路径
     public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
-    // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
+    // 创建一个名为“示例块”的新块项，结合了名称空间和路径
     public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
 
-    // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
+    // 创建一个新的食物项目，id为“示例id”，营养度1和饱和度2
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
             .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
 
-    // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
+    // 为示例选项卡创建一个创造性选项卡“示例选项卡”，放置在战斗选项卡之后
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.examplemod")) //The language key for the title of your CreativeModeTab
+            .title(Component.translatable("itemGroup.examplemod")) //你的创意细节的标题的语言键
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
-                output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
+                output.accept(EXAMPLE_ITEM.get()); // 将示例项添加到您自己的选项卡的选项卡中，此方法比事件更可取
+                output.accept(TOUMOD_ITEM.get());
             }).build());
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    // mod类的构造函数是在加载mod时运行的第一个代码
+    // FML将识别一些参数类型，如IEventBus总线或mod容器，并自动传递它们
     public TouSkeMod(IEventBus modEventBus, ModContainer modContainer)
     {
-        // Register the commonSetup method for modloading
+        // 注册模式加载的通用设置方法
         modEventBus.addListener(this::commonSetup);
 
-        // Register the Deferred Register to the mod event bus so blocks get registered
-        BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
+        TouMod.register(modEventBus);
+        //注册物品类到mod事件总线,以便自定义物品被注册
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        ModEntityTypes.register(modEventBus);
+        //注册实体类到mod事件总线,以便实体被注册
+
+
+
+        // 将延迟注册器注册到mod事件总线，以便块被注册
+        BLOCKS.register(modEventBus);
+        // 将延迟注册注册到mod事件总线，以便项目得到注册
+        ITEMS.register(modEventBus);
+        // 将延迟注册注册到mod事件总线，以便选项卡被注册
+        CREATIVE_MODE_TABS.register(modEventBus);
+        TOU_TABS.register(modEventBus);
+        // 注册自己的服务器，我们感兴趣的和其他游戏事件
+        // 注意，当且仅当我们希望这个类（示例例）直接响应事件时，这才是必要的
+        // 如果这个类中没有@订阅事件注释函数，请不要添加这一行，比如下面启动（）
         NeoForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
+        // 将该项目注册到一个创意选项卡中
         modEventBus.addListener(this::addCreative);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        // 注册我们的mod的模式配置规范，这样fml就可以为我们创建和加载配置文件
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        // Some common setup code
+        // 一些常见的设置代码
         LOGGER.info("HELLO FROM COMMON SETUP");
 
         if (Config.logDirtBlock)
@@ -107,29 +155,31 @@ public class TouSkeMod
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
-    // Add the example block item to the building blocks tab
+    // 将示例块项添加到构建块选项卡中
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
             event.accept(EXAMPLE_BLOCK_ITEM);
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TOUMOD_ITEM);
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    // 您可以使用下标事件，并让事件总线发现方法来调用
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
-        // Do something when the server starts
+        // 当服务器启动时，做一些事情
         LOGGER.info("HELLO from server starting");
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    // 您可以使用事件订阅者在用@订阅事件注释的类中自动注册所有静态方法
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
+            // 一些客户端设置代码
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
