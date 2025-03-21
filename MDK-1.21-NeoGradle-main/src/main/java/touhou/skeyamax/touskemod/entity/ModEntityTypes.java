@@ -19,7 +19,7 @@ public class ModEntityTypes {
     public static final DeferredRegister<EntityDataSerializer<?>> ENTITY_TYPES =
             DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, TouSkeMod.MODID);
 
-    public static final Supplier<EntityType<DogEntity>> DOG = registerEntity();
+//    public static final Supplier<EntityType<DogEntity>> DOG = registerEntity();
 
     private static <T extends Mob> Supplier<EntityType<T>> registerEntity(String name, EntityType.EntityFactory<T> entity, float width, float height, int primaryEggColor, int secondaryEggColor) {
         return TouSkeMod.COMMON_PLATFORM.registerEntity(name, () -> EntityType.Builder.of(entity, MobCategory.CREATURE).sized(width, height).build(name));

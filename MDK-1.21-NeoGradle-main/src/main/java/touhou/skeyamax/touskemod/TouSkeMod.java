@@ -12,6 +12,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
@@ -23,22 +24,21 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
-import software.bernie.geckolib.GeckoLib;
 import touhou.skeyamax.touskemod.entity.ModEntityTypes;
 import touhou.skeyamax.touskemod.item.TouMod;
 import touhou.skeyamax.touskemod.platform.TouSkeModPlatform;
+import touhou.skeyamax.touskemod.registry.BlockRegistry;
 import touhou.skeyamax.touskemod.registry.EntityRegistry;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ServiceLoader;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -61,6 +61,8 @@ public class TouSkeMod
 
     // 创建一个延迟寄存器来保存方块，这些方块都将在“示例”名称空间下注册
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
+    //
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, TouSkeMod.MODID);
     // 创建一个延迟注册器，以保存所有将在“示例”名称空间下注册的项目
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     // 创建一个延迟注册来保存创造性标签，这些都将在“示例”名称空间下注册
@@ -109,7 +111,7 @@ public class TouSkeMod
             }).build());
 
     // mod类的构造函数是在加载mod时运行的第一个代码
-    // FML将识别一些参数类型，如IEventBus总线或mod容器，并自动传递它们
+    // FML将识别一些参数类型，如IEventBus总线或mod容器.，并自动传递它们
     public TouSkeMod(IEventBus modEventBus, ModContainer modContainer)
     {
         // 注册模式加载的通用设置方法
@@ -125,6 +127,8 @@ public class TouSkeMod
 
         // 将延迟注册器注册到mod事件总线，以便块被注册
         BLOCKS.register(modEventBus);
+        //
+        BLOCK_ENTITIES.register(modEventBus);
         // 将延迟注册注册到mod事件总线，以便项目得到注册
         ITEMS.register(modEventBus);
         // 将延迟注册注册到mod事件总线，以便选项卡被注册
@@ -137,6 +141,9 @@ public class TouSkeMod
 
         // 将该项目注册到一个创意选项卡中
         modEventBus.addListener(this::addCreative);
+        modEventBus.<EntityAttributeCreationEvent>addListener(event -> EntityRegistry.registerEntityAttributes(event::put));
+
+        doRegistrations();
 
         // 注册我们的mod的模式配置规范，这样fml就可以为我们创建和加载配置文件
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

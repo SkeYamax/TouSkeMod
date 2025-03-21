@@ -35,4 +35,6 @@ public interface TouSkeModPlatform {
     <E extends Mob> Supplier<SpawnEggItem> makeSpawnEggFor(Supplier<EntityType<E>> entityType, int primaryEggColour, int secondaryEggColour, Item.Properties itemProperties);
     //创建创造模式标签页
     CreativeModeTab.Builder newCreativeTabBuilder();
+
+
 }
